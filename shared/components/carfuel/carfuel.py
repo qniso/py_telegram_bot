@@ -9,7 +9,7 @@ def carFuel(message, bot):
     car_numbers = getCarsNumbers()
     print(car_numbers)
 
-    bot.send_message(message.chat.id, "Напишите пожалуйста номер машины")
+    bot.send_message(message.chat.id, "Напишите пожалуйста номер машины", reply_markup=None)
 
     def search(list, car_num):
         for i in range(len(list)):
@@ -26,10 +26,10 @@ def carFuel(message, bot):
         carNum = message.text
         data.car_number = carNum
         if search(car_numbers, carNum):
-            bot.send_message(message.chat.id, f"Отлично, напишите сколько литров залито в машину под номером {carNum}")
+            bot.send_message(message.chat.id, f"Отлично, напишите сколько литров залито в машину под номером {carNum}", reply_markup=None)
             bot.register_next_step_handler(message, second_step)
         else:
-            bot.send_message(message.chat.id, "Такой машины нет в базе, попробуйте ещё раз\nНапишите пожалуйста номер машины")
+            bot.send_message(message.chat.id, "Такой машины нет в базе, попробуйте ещё раз\nНапишите пожалуйста номер машины", reply_markup=None)
             bot.register_next_step_handler(message, first_step)
 
     bot.register_next_step_handler(message, first_step)

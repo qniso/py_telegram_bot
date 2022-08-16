@@ -19,6 +19,13 @@ def connectMongo(data):
     post = data.__dict__
     send_data = collection.insert_one(post)
 
+def registerUser(data):
+    db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
+    collection = db['TG_REGISTERED_USERS']  # PYTHON_TEST
+
+    post = data.__dict__
+    send_data = collection.insert_one(post)
+
 def getCarsNumbers():
     db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
     collection = db['CAR_NUMBERS']  # PYTHON_TEST
