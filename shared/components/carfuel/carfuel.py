@@ -45,7 +45,8 @@ def carFuel(message, bot):
             bot.register_next_step_handler(message, second_step)
             return
         else:
-            bot.send_message(message.chat.id, "Данные отправлены!")
+            bot.send_message(message.chat.id, "Данные отправлены!✅\n"
+                                            "Для возврата в меню работы нажмите на команду: /work_start")
             sendCarFuel(data)
 
 

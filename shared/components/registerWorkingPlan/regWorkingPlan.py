@@ -25,7 +25,7 @@ def registerWorkingPlan(message, bot):
     bot.register_next_step_handler(message, first_step)
 
     def second_step(message):
-        data.planText = message.text.isdigit()
+        data.planText = message.text
         bot.send_message(message.chat.id, f'План под номером: {data.planNumber}\n'
                                           f'Необходимо сделать:\n{data.planText}\n')
         sendWorkingPlan(data,message, bot)
