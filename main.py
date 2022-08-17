@@ -2,6 +2,7 @@ import datetime
 import telebot
 
 from shared.classes.User_desc import User_desc
+from shared.components.registerWorkingPlan.regWorkingPlan import registerWorkingPlan
 from shared.database.mongo import connectMongo, registerUser
 from shared.components.carfuel.carfuel import carFuel
 
@@ -36,11 +37,9 @@ def registration(message):
     user.userNickName = message.chat.username
     user.date = datetime.datetime.now()
     try:
-        registerUser(user)
-        bot.send_message(message.chat.id, "Регистрация успешна ✅")
+        registerUser(user, bot, message)
     except Exception as e:
         bot.reply_to(message, 'oooops')
-    print('registration')
 
 def choice_step(message):
     try:
@@ -49,6 +48,7 @@ def choice_step(message):
             carFuel(message, bot)
         elif(message.text == "2"):
             bot.reply_to(message, 'Вы выбрали задать план')
+            registerWorkingPlan(message, bot)
         elif (message.text == "3"):
             bot.reply_to(message, 'Вы выбрали приступить к выполнению плана')
         else:

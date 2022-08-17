@@ -3,3 +3,5 @@ class User_desc:
 
 class Car_Fuel:
     pass
+class WorkingPlan:
+    pass
