@@ -3,6 +3,7 @@ import telebot
 
 from shared.classes.User_desc import User_desc
 from shared.components.registerWorkingPlan.regWorkingPlan import registerWorkingPlan
+from shared.components.takeWorkingPlan.takePlan import takeWorkingPlan
 from shared.database.mongo import connectMongo, registerUser
 from shared.components.carfuel.carfuel import carFuel
 
@@ -30,16 +31,17 @@ def work_start(message):
 @bot.message_handler(commands=['register'])
 def registration(message):
     user = User_desc()
-
+    #
     user.chat_id = message.chat.id
     user.userFirstName = f"{message.chat.first_name}"
     user.userLastName = f"{message.chat.last_name}"
     user.userNickName = message.chat.username
     user.date = datetime.datetime.now()
-    try:
-        registerUser(user, bot, message)
-    except Exception as e:
-        bot.reply_to(message, 'oooops')
+    # try:
+    registerUser(user, bot, message)
+    # except Exception as e:
+    #     print(e)
+    #     bot.reply_to(message, 'oooops')
 
 def choice_step(message):
     try:
@@ -51,6 +53,7 @@ def choice_step(message):
             registerWorkingPlan(message, bot)
         elif (message.text == "3"):
             bot.reply_to(message, 'Вы выбрали приступить к выполнению плана')
+            takeWorkingPlan(message, bot)
         else:
             bot.send_message(message.chat.id, "Некорректный символ для выбора, попробуйте ещё раз")
             work_start(message)
