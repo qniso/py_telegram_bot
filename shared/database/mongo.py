@@ -23,7 +23,7 @@ def registerUser(data, bot, message):
 
     cur = collection.find()
     res = list(cur)
-
+    chat_id = None
     if(len(res) > 1 ):
         post = data.__dict__
         send_data = collection.insert_one(post)
