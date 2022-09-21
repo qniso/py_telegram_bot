@@ -11,6 +11,7 @@ def registerWorkingPlan(message, bot):
     data.chat_id = message.chat.id
     data.userName = f"{message.chat.first_name} {message.chat.last_name}"
     data.userNickName = message.chat.username
+    data.status = 'New'
     data.date = datetime.datetime.now()
 
     bot.send_message(message.chat.id, "Напишите пожалуйста номер нового плана")
