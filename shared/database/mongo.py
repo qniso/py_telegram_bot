@@ -1,4 +1,4 @@
-
+import datetime
 import pymongo
 from shared.classes.User_desc import User_desc
 import certifi
@@ -62,13 +62,11 @@ def sendWorkingPlan(data, message, bot):
 
     cur = collection.find()
     res = list(cur)
-    print(res)
     if (len(res) == 0):
         post = data.__dict__
         send_data = collection.insert_one(post)
         bot.send_message(message.chat.id, "План зарегистрирован успешно ✅\n"
                                             "Для возврата в меню работы нажмите на команду: /work_start")
-        print(data.__dict__)
     else:
         for x in doc:
             a = x
@@ -78,7 +76,6 @@ def sendWorkingPlan(data, message, bot):
         bot.send_message(message.chat.id, "План зарегистрирован успешно ✅\n"
                                             "Для возврата в меню работы нажмите на команду: /work_start")
 
-        print(data.__dict__)
 
 def takePlan(message, bot):
     id = 0
@@ -86,24 +83,42 @@ def takePlan(message, bot):
     collection = db['WORKING_PLAN']  # PYTHON_TEST
 
     doc = collection.find()
-
-    print()
-    space = "\n"
     result = []
-
+    worker =[]
+    worker_name ="-"
     for x in doc:
         id+=1
-        result.append(x)
-        # print(f"{id}. Номер плана: {x['planNumber']}\n"
-        #       f"Организатор: {x['userName']}\n"
-        #       f"Исполнитель: -\n"
-        #       f"Описание:\n"
-        #       f"{x['planText']}")
 
-        bot.send_message(message.chat.id, f"{id}. Номер плана: {x['planNumber']}\n"
+        # print(x['worker'])
+
+        full_result = '\n'.join(map(str, [f"\n{id}. Номер плана: {x['planNumber']}\n"
                                           f"Организатор: {x['userName']}\n"
-                                          f"Исполнитель: -\n"
+                                          f"Исполнитель: {worker_name}\n"
                                           f"Описание:\n"
-                                          f"{x['planText']}")
+                                          f"{x['planText']}\n"]))
+        result.append(full_result)
 
-    print(result)
+    bot.send_message(message.chat.id, "".join(result))
+    return result
+
+def getWorkingPlan(plan_num, worker, bot, message):
+    db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
+    collection = db['WORKING_PLAN']  # PYTHON_TEST
+    update_date = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+    for x in collection.find({"id": plan_num}):
+        worker_name = worker
+
+        for i in collection.find({"id": plan_num}):
+            result_status = collection.update_one({"id": plan_num}, {"$set": {"status": "В работе"}} )
+            result_worker = collection.update_one({"id": plan_num}, {"$set": {"status": "В работе"}} )
+        for i in collection.find({"id": plan_num}):
+            result = collection.update_one({"id": plan_num}, {"$push": {"worker": worker}})
+        for i in collection.find({"id": plan_num}):
+            result = collection.update_one({"id": plan_num}, {"$push": {"update_time": update_date}})
+
+    #Перепровить
+
+
+
+

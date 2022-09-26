@@ -59,6 +59,7 @@ def choice_step(message):
             work_start(message)
     except Exception as e:
         bot.reply_to(message, 'oooops')
+        print(e)
 
 
 
