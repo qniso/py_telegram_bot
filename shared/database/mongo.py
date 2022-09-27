@@ -84,12 +84,17 @@ def takePlan(message, bot):
 
     doc = collection.find()
     result = []
-    worker =[]
+    worker = []
     worker_name ="-"
+
     for x in doc:
         id+=1
-
-        # print(x['worker'])
+        if (not len(x['worker']) == 0):
+            for i in x['worker']:
+                worker.append(i)
+                worker_name = ', '.join(worker)
+        else:
+            worker_name = "-"
 
         full_result = '\n'.join(map(str, [f"\n{id}. Номер плана: {x['planNumber']}\n"
                                           f"Организатор: {x['userName']}\n"
@@ -97,7 +102,6 @@ def takePlan(message, bot):
                                           f"Описание:\n"
                                           f"{x['planText']}\n"]))
         result.append(full_result)
-
     bot.send_message(message.chat.id, "".join(result))
     return result
 
@@ -111,11 +115,8 @@ def getWorkingPlan(plan_num, worker, bot, message):
 
         for i in collection.find({"id": plan_num}):
             result_status = collection.update_one({"id": plan_num}, {"$set": {"status": "В работе"}} )
-            result_worker = collection.update_one({"id": plan_num}, {"$set": {"status": "В работе"}} )
-        for i in collection.find({"id": plan_num}):
-            result = collection.update_one({"id": plan_num}, {"$push": {"worker": worker}})
-        for i in collection.find({"id": plan_num}):
-            result = collection.update_one({"id": plan_num}, {"$push": {"update_time": update_date}})
+            result_worker = collection.update_one({"id": plan_num}, {"$push": {"worker": worker}})
+            result_update_time = collection.update_one({"id": plan_num}, {"$push": {"update_time": update_date}})
 
     #Перепровить
 
