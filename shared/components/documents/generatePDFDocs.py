@@ -24,7 +24,7 @@ def create_document(plan_choosen):
     pdfmetrics.registerFont(TTFont('Roboto', 'shared/components/documents/Fonts/Roboto-Regular.ttf'))
 
     file_name = f'{data[0]}.pdf'
-    my_canvas = canvas.Canvas(f'/Users/roman.koriuk/py_telegram_bot/shared/components/documents/pdfDocs/{file_name}')
+    my_canvas = canvas.Canvas(f'shared/components/documents/pdfDocs/{file_name}')
     my_canvas.setFont('Roboto', 12)
     my_canvas.drawString(30, 750, f"TESTING PDF DOCUMENT")
     my_canvas.drawString(30, 735, f"DATA GIVES FROM MONGODB")
