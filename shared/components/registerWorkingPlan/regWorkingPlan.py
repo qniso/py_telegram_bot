@@ -31,7 +31,7 @@ def registerWorkingPlan(message, bot):
         bot.send_message(message.chat.id, f'План под номером: {data.planNumber}\n'
                                           f'Необходимо сделать:\n{data.planText}\n')
         sendWorkingPlan(data,message, bot)
-        # print(data.__dict__)
+
 
 
 

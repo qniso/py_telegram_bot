@@ -15,7 +15,6 @@ def takeWorkingPlan(message, bot):
             bot.reply_to(message, 'oooops')
             print(e)
 
-    #Добавить внесения имени исполнителя в вывод сообщений с планом
     bot.register_next_step_handler(message, first_step)
 
 

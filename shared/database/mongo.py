@@ -118,8 +118,6 @@ def getWorkingPlan(plan_num, worker, bot, message):
             result_worker = collection.update_one({"id": plan_num}, {"$push": {"worker": worker}})
             result_update_time = collection.update_one({"id": plan_num}, {"$push": {"update_time": update_date}})
 
-    #Перепровить
-
 
 
 
