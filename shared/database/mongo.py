@@ -118,6 +118,25 @@ def getWorkingPlan(plan_num, worker, bot, message):
             result_worker = collection.update_one({"id": plan_num}, {"$push": {"worker": worker}})
             result_update_time = collection.update_one({"id": plan_num}, {"$push": {"update_time": update_date}})
 
+def getWorkingPlanForDocument(plan_num):
+    db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
+    collection = db['WORKING_PLAN']  # PYTHON_TEST
 
+    doc = collection.find({"id": plan_num})
+    result = []
+    worker = []
+    worker_name ="-"
+    for x in doc:
+        if (not len(x['worker']) == 0):
+            for i in x['worker']:
+                worker.append(i)
+                worker_name = ', '.join(worker)
+        else:
+            worker_name = "-"
 
+        full_result = [f"Номер плана: {x['planNumber']}", f"Организатор: {x['userName']}", f"Исполнитель: {worker_name}",
+                                          f"Описание: {x['planText']}"]
+
+        result = full_result
+    return result
 

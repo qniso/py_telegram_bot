@@ -13,8 +13,9 @@ def takeWorkingPlan(message, bot):
             worker = f"{message.chat.first_name} {message.chat.last_name}"
             getWorkingPlan(plan_choosen, worker, bot, message)
             bot.send_message(message.chat.id, "Данные обновлены!✅\nПлан взят в работу\nДля возврата в меню работы нажмите на команду: /work_start")
-            send_email()
-            create_document()
+            file_name = create_document(plan_choosen)
+            send_email(file_name)
+
         except Exception as e:
             bot.reply_to(message, 'oooops')
             print(e)
