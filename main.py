@@ -1,7 +1,9 @@
+import base64
 import datetime
 import telebot
 
 from shared.classes.User_desc import User_desc
+from shared.components.holidays.setHoliday import setHoliday
 from shared.components.registerWorkingPlan.regWorkingPlan import registerWorkingPlan
 from shared.components.takeWorkingPlan.takePlan import takeWorkingPlan
 from shared.database.mongo import connectMongo, registerUser
@@ -42,6 +44,22 @@ def registration(message):
     # except Exception as e:
     #     print(e)
     #     bot.reply_to(message, 'oooops')
+
+    # except Exception as e:
+    #     print(e)
+    #     bot.reply_to(message, 'oooops')
+
+@bot.message_handler(commands=['holiday'])
+def holiday(message):
+        user = User_desc()
+
+        user.chat_id = message.chat.id
+        user.userFirstName = f"{message.chat.first_name}"
+        user.userLastName = f"{message.chat.last_name}"
+        user.userNickName = message.chat.username
+        user.date = datetime.datetime.now()
+
+        setHoliday(message, bot)
 
 def choice_step(message):
     try:

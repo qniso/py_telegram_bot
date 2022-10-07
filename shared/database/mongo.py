@@ -2,6 +2,8 @@ import datetime
 import pymongo
 from shared.classes.User_desc import User_desc
 import certifi
+from bson.binary import Binary
+
 ca = certifi.where()
 
 myclient = pymongo.MongoClient(
@@ -105,7 +107,7 @@ def takePlan(message, bot):
     bot.send_message(message.chat.id, "".join(result))
     return result
 
-def getWorkingPlan(plan_num, worker, bot, message):
+def getWorkingPlan(plan_num, worker):
     db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
     collection = db['WORKING_PLAN']  # PYTHON_TEST
     update_date = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -139,4 +141,35 @@ def getWorkingPlanForDocument(plan_num):
 
         result = full_result
     return result
+
+def send_holiday(data, message, bot):
+    db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
+    collection = db['HOLIDAYS']  # PYTHON_TEST
+    try:
+        post = data.__dict__
+        send_data = collection.insert_one(post)
+        bot.send_message(message.chat.id, 'Заявление отправленно на рассморение')
+    except Exception as e:
+        bot.send_message(message.chat.id, 'Произошла ошибка, отправили репорт админу')
+        print(e)
+
+def get_holiday_data(data, message, bot):
+    db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
+    collection = db['HOLIDAYS']  # PYTHON_TEST
+    try:
+        post = data.__dict__
+        send_data = collection.insert_one(post)
+        bot.send_message(message.chat.id, 'Заявление отправленно на рассморение')
+    except Exception as e:
+        bot.send_message(message.chat.id, 'Произошла ошибка, отправили репорт админу')
+        print(e)
+
+def send_doc(file, date, name):
+    db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
+    collection = db['HOLIDAY_DOCS']  # PYTHON_TEST
+
+    with open(f'{file}', 'rb') as f:
+        encoded = Binary(f.read())
+
+    collection.insert_one({"filename" : f'Заява на выдпустку {name} {date}', "file": encoded, "description": f'Звява від {date}'})
 

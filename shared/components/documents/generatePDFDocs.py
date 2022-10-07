@@ -1,45 +1,62 @@
-from reportlab.pdfgen import canvas
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import Paragraph, Frame, Spacer
+# import base64
+import requests
+from docx.shared import Mm
+from docxtpl import DocxTemplate, InlineImage
 
 import datetime
+from datetime import timedelta
 
-from shared.database.mongo import getWorkingPlanForDocument
-
-
-def create_document(plan_choosen):
-
-    data = getWorkingPlanForDocument(plan_choosen)
-    date = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-
-    format_data = ''.join(map(str,data))
-    # print(data)
+from shared.database.mongo import send_doc
 
 
+def generate_document_to_holiday(operation, data, message, bot):
+    if(operation == "holiday"):
+        date_start = data["date_start"]
+        date_end = data["date_end"]
+        full_name = data['userName']
+        days_count = '-'
+        a = ''
+        doc = DocxTemplate('shared/components/documents/template/template_holiday/holiday_template.docx')
+        shtamp = InlineImage(doc, image_descriptor='shared/components/documents/template/img/izgotovlenie-faksimile-300x300-2.png', width=Mm(40), height=Mm(40))
+        datetime_conv_start = datetime.date(int(date_start.split(".")[2]), int(date_start.split(".")[1]), int(date_start.split(".")[0]))
+        datetime_conv_end = datetime.date(int(date_end.split(".")[2]), int(date_end.split(".")[1]),int(date_end.split(".")[0]))
 
-    # print(format_data)
+        delta = datetime_conv_end - datetime_conv_start
+        for i in range(delta.days + 1):
+            day = datetime_conv_start + timedelta(days=i)
+            days_count = str(delta.days)
+        print(int(days_count))
+        if (int(days_count) + 1 > 3 or not int(days_count) == 1):
+            a = 'днів'
+        elif(int(days_count) + 1 % 10 == 2):
+            a = 'дні'
+        else:
+            a = 'день'
 
-    # FONT REGISTRATION
-    pdfmetrics.registerFont(TTFont('Roboto', 'shared/components/documents/Fonts/Roboto-Regular.ttf'))
+        context = {'company_name': 'OATS',
+                   'person_name': f'{full_name}',
+                   'date_start': f'{date_start}',
+                   'date_end': f'{date_end}',
+                   'days_count': f'{int(days_count)+1}',
+                   'days_word' : f'{a}',
+                   'date': datetime.datetime.now().strftime("%m.%d.%Y"),
+                   'print': shtamp,
+                    }
+        print(a)
+        print(int(days_count)+1 % 10 == 2)
+        doc.render(context)
+        doc.save(f'Заява на відпустку {full_name} {datetime.datetime.now().strftime("%m.%d.%Y")}.docx')
+        send_doc(f'Заява на відпустку {full_name} {datetime.datetime.now().strftime("%m.%d.%Y")}.docx', datetime.datetime.now().strftime("%m.%d.%Y"), full_name)
 
-    file_name = f'{data[0]}.pdf'
-    my_canvas = canvas.Canvas(f'shared/components/documents/pdfDocs/{file_name}')
-    my_canvas.setFont('Roboto', 12)
-    my_canvas.drawString(30, 750, f"TESTING PDF DOCUMENT")
-    my_canvas.drawString(30, 735, f"DATA GIVES FROM MONGODB")
-    my_canvas.drawString(480, 750, f"{date}")
-    my_canvas.line(480, 747, 580, 747)
-    my_canvas.drawString(30, 710, f"WORKING PLAN")
-    print(data)
-    print()
-    a = 680
-    for i in data:
+        bot.send_message(message.chat.id, "Ваш документ на відпустку сформований, якщо зʼявляються питання щодо документу, то скористуйтеся командою /send_report, щоб оповістити адміна про помилку")
 
-        my_canvas.drawString(30, a, f"{i}")
-        a = a - 15
-        # print(i)
-    # my_canvas.drawString(30, 710, f"{format_data}")
-    my_canvas.save()
+        url = f'https://api.telegram.org/bot5747097442:AAFaW6N9A1Q3L5pfdb6fYlQ9OZ9IaSgA6hI/'
+        method = url + 'sendDocument'
 
-    return file_name
+        with open(f'Заява на відпустку {full_name} {datetime.datetime.now().strftime("%m.%d.%Y")}.docx', "rb") as file:
+            files = {"document": file}
+            title = f"Ваш документ на відпустку"
+            chat_id = message.chat.id
+            r = requests.post(method, data={"chat_id": chat_id, "caption": title}, files=files)
+            if r.status_code != 200:
+                raise Exception("send error")
