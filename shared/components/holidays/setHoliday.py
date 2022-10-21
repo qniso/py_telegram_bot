@@ -1,6 +1,6 @@
 from shared.classes.User_desc import Holiday
 from shared.components.documents.generatePDFDocs import generate_document_to_holiday
-from shared.components.pymailer.mailer import send_email
+# from shared.components.pymailer.mailer import send_email
 from shared.database.mongo import send_holiday
 
 

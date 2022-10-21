@@ -9,3 +9,4 @@ urllib3==1.26.11
 reportlab==3.6.11
 docx~=0.2.4
 docxtpl~=0.16.4
+python-dotenv~=0.21.0

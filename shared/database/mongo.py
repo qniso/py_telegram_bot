@@ -2,12 +2,13 @@ import datetime
 import pymongo
 from shared.classes.User_desc import User_desc
 import certifi
-from bson.binary import Binary
+
+from shared.settings.settings import DATA_BASE_URL
 
 ca = certifi.where()
 
 myclient = pymongo.MongoClient(
-    "mongodb+srv://Admin_qniso:BUOorKChVrdWTWVu@telegrambot.n1ebp.mongodb.net/?retryWrites=true&w=majority", tlsCAFile=ca
+    f"{DATA_BASE_URL}", tlsCAFile=ca
 )
 
 user = User_desc()
@@ -153,23 +154,12 @@ def send_holiday(data, message, bot):
         bot.send_message(message.chat.id, 'Произошла ошибка, отправили репорт админу')
         print(e)
 
-def get_holiday_data(data, message, bot):
-    db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
-    collection = db['HOLIDAYS']  # PYTHON_TEST
-    try:
-        post = data.__dict__
-        send_data = collection.insert_one(post)
-        bot.send_message(message.chat.id, 'Заявление отправленно на рассморение')
-    except Exception as e:
-        bot.send_message(message.chat.id, 'Произошла ошибка, отправили репорт админу')
-        print(e)
-
-def send_doc(file, date, name):
+def get_holiday_data(file_name):
     db = myclient['TELEGRAM_BOT']  # TELEGRAM_BOT
     collection = db['HOLIDAY_DOCS']  # PYTHON_TEST
 
-    with open(f'{file}', 'rb') as f:
-        encoded = Binary(f.read())
+    doc = collection.find_one()
 
-    collection.insert_one({"filename" : f'Заява на выдпустку {name} {date}', "file": encoded, "description": f'Звява від {date}'})
+    with open(f'{file_name}', 'wb') as f:
+        f.write(bytes(doc['file']))
 

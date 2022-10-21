@@ -8,9 +8,9 @@ from shared.components.registerWorkingPlan.regWorkingPlan import registerWorking
 from shared.components.takeWorkingPlan.takePlan import takeWorkingPlan
 from shared.database.mongo import connectMongo, registerUser
 from shared.components.carfuel.carfuel import carFuel
+from shared.settings.settings import BOT_TOKEN
 
-#5316275912:AAGzAejn-Pa-8usVJ7eUYujH4-EwvO9B9W8
-bot = telebot.TeleBot("5747097442:AAFaW6N9A1Q3L5pfdb6fYlQ9OZ9IaSgA6hI")
+bot = telebot.TeleBot(f"{BOT_TOKEN}")
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
